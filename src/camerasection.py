@@ -107,7 +107,7 @@ class SnapshotButton(QPushButton):
 		super(SnapshotButton, self).__init__(QIcon('resources/camera.svg'), '  Take Picture', parent)
 		
 		# set initial button function to start preview
-		self.clicked.connect(camera.capture)
+		self.clicked.connect(camera.capture_as_thread)
 		
 class CameraSection(QGroupBox):
 	

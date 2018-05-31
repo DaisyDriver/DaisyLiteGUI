@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QGridLayout, QApplication, QMessageBox
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QApplication, QMessageBox
 from src.camerasection import CameraSection
 from src.camera import Camera
 from src.manualmovement import ManualMovementSection
@@ -30,15 +30,15 @@ class MainWindow(QWidget):
 		self.setWindowTitle('DaisyLiteGUI v1.0')
 		
 		# main layout
-		mainlayout = QGridLayout()
+		mainlayout = QHBoxLayout()
 		
 		# get widgets
 		self.camerasection = CameraSection(self, self.camera)
 		self.manualmovement = ManualMovementSection(self, self.camera, self.DD)
 		
 		# add widgets to main layout
-		mainlayout.addWidget(self.camerasection, 0, 0, 3, 1)
-		mainlayout.addWidget(self.manualmovement, 1, 1, 1, 1)
+		mainlayout.addWidget(self.camerasection)
+		mainlayout.addWidget(self.manualmovement)
 		
 		# check if DD plugged in, disable manual movement section if so
 		# and display warning
@@ -52,7 +52,7 @@ class MainWindow(QWidget):
 		
 		# set window geometry
 		self.setFixedSize(mainlayout.sizeHint())
-		self.move(75, 75)
+		self.move(0, 0)
 		
 	def closeEvent(self, event):
 		# check if timer is running, show warning box if so

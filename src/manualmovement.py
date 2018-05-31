@@ -1,7 +1,29 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, pyqtSignal, pyqtSlot
 from PyQt5.QtCore import pyqtSignal
+
+class SpeedButton(QPushButton):
+	
+	indexclick = pyqtSignal(int)
+	
+	def __init__(self, label, parent, index):
+		super(SpeedButton, self).__init__(label, parent)
+		
+		self.index = index
+		
+		self.clicked.connect(self.onclick)
+		
+		self.setFixedSize(60, 60)
+		
+	def onclick(self):
+		self.indexclick.emit(self.index)
+		
+	def anyclicked(self, index_in):
+		if index_in == self.index:
+			self.setChecked(True)
+		else:
+			self.setChecked(False)
 
 class ManMoveSpeed(QGroupBox):
 	
@@ -11,46 +33,50 @@ class ManMoveSpeed(QGroupBox):
 		# announce parent
 		self.parent = parent
 		
-		# announce daisy driver
+		# announce daisydriver
 		self.DD = daisydriver
 		
-		# initialise user interface
 		self.initUI()
 		
-		# connect slider to daisy driver speed change function
-		self.speedslider.valueChanged.connect(self.DD.speedset)
+		self.makeconnections()
+		
+		self.indexmanager(self.DD.speedval)
 		
 	def initUI(self):
+		
 		# general settings
 		self.setTitle('Speed')
 		
-		# XY controls, grid layout
-		sublayout_speed = QGridLayout()
+		layout = QVBoxLayout()
 		
-		# initialise widgets
-		self.speedslider = QSlider(Qt.Vertical, self.parent)
-		self.speedslider.setMinimum(0)
-		self.speedslider.setMaximum(2)
-		self.speedslider.setTickPosition(QSlider.TicksLeft)
-		self.speedslider.setTickInterval(1)
-		self.speedslider.setFixedHeight(115)
-		self.speedslider.setValue(self.DD.speedval)
-
-		self.hispeed = QLabel('High')
-		self.medspeed = QLabel('Med')
-		self.lospeed = QLabel('Low')
+		self.but_high = SpeedButton('High', self, 2)
+		self.but_high.setCheckable(True)
+		self.but_med = SpeedButton('Medium', self, 1)
+		self.but_med.setCheckable(True)
+		self.but_low = SpeedButton('Low', self, 0)
+		self.but_low.setCheckable(True)
 		
-		# add widgets to vertical box layout
-		sublayout_speed.addWidget(self.speedslider, 0, 1, 7, 1)
-		sublayout_speed.addWidget(self.hispeed, 0, 0, 1, 1)
-		sublayout_speed.addWidget(self.medspeed, 3, 0, 1, 1)
-		sublayout_speed.addWidget(self.lospeed, 6, 0, 1, 1)
+		layout.addWidget(self.but_high)
+		layout.addWidget(self.but_med)
+		layout.addWidget(self.but_low)
 		
-		# set sublayout as widget layout
-		self.setLayout(sublayout_speed)
+		self.setLayout(layout)
 		
 		# set geometry
-		self.setFixedSize(85, 175)
+		self.setFixedSize(85, 245)
+		
+	@pyqtSlot(int)
+	def indexmanager(self, index_in):
+		self.but_high.anyclicked(index_in)
+		self.but_med.anyclicked(index_in)
+		self.but_low.anyclicked(index_in)
+		
+		self.DD.speedset(index_in)
+		
+	def makeconnections(self):
+		self.but_high.indexclick.connect(self.indexmanager)
+		self.but_med.indexclick.connect(self.indexmanager)
+		self.but_low.indexclick.connect(self.indexmanager)
 		
 class XYbutton(QPushButton):
 	
@@ -64,7 +90,8 @@ class XYbutton(QPushButton):
 		self.direction = direction
 		
 		# set geometry
-		self.setFixedSize(40, 40)
+		self.setFixedSize(60, 60)
+		self.setIconSize(QSize(20, 20))
 		
 		# connect click
 		self.pressed.connect(self.on_click)
@@ -118,7 +145,7 @@ class ManMoveXY(QGroupBox):
 		self.setLayout(sublayout_XY)
 		
 		# set geometry
-		self.setFixedSize(150, 175)
+		self.setFixedSize(220, 245)
 		
 class Zbutton(QPushButton):
 	
@@ -132,8 +159,8 @@ class Zbutton(QPushButton):
 		self.direction = direction
 		
 		# set geometry
-		self.setFixedSize(40, 58)
-		self.setIconSize(QSize(23, 23))
+		self.setFixedSize(50, 87)
+		self.setIconSize(QSize(28, 28))
 		
 		# connect click
 		self.pressed.connect(self.on_click)
@@ -175,7 +202,7 @@ class ManMoveZ(QGroupBox):
 		self.setLayout(sublayout_Z)
 		
 		# set geometry
-		self.setFixedSize(85, 175)
+		self.setFixedSize(85, 245)
 
 class ManualMovementSection(QGroupBox):
 	

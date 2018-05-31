@@ -133,6 +133,10 @@ class Camera(PiCamera):
 			
 			# use parent method to capture, *bayer and quality only used for JPG formats*
 			super(Camera, self).capture(filename, format=self.fn.FileFormat, use_video_port=False, bayer=self.fn.bayerInclude, quality=self.fn.JPGquality)
+	
+	def capture_as_thread(self):
+		capthread = Thread(target=self.capture())
+		capthread.start()
 			
 	def start_timed_capture(self):
 		# special case for only 1 picture
