@@ -9,7 +9,7 @@ class FileNameHelper():
 	
 	def __init__(self):
 		# set default save directory, make folder if does not exist
-		self.savedir = '/home/pi/DaisyGUI/'
+		self.savedir = '/home/pi/DaisyLiteGUI/images/'
 		Path(self.savedir).mkdir(parents=True, exist_ok=True)
 		
 		# set default name and file format
